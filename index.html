@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick-Do | 완벽 버전</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Quick-Do</h1>
+            <div class="progress-wrapper">
+                <div class="progress-container">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+                <span id="progressText">0% 완료</span>
+            </div>
+        </header>
+
+        <section class="input-section">
+            <input type="text" id="todoInput" placeholder="할 일을 입력하세요..." maxlength="50">
+            <select id="categorySelect">
+                <option value="업무">업무</option>
+                <option value="개인">개인</option>
+                <option value="공부">공부</option>
+            </select>
+            <button id="addBtn">추가</button>
+        </section>
+
+        <section class="filter-section">
+            <button class="filter-btn active" data-filter="전체">전체</button>
+            <button class="filter-btn" data-filter="업무">업무</button>
+            <button class="filter-btn" data-filter="개인">개인</button>
+            <button class="filter-btn" data-filter="공부">공부</button>
+        </section>
+
+        <ul id="todoList"></ul>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>
