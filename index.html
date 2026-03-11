@@ -1,45 +1,114 @@
 <!DOCTYPE html>
-<html lang="ko">
-
+<html lang="ko" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quick-Do | 완벽 버전</title>
+    <title>My Tasks - 스마트 할 일 관리</title>
+    <meta name="description" content="사용성 극대화된 스마트 할 일 관리 애플리케이션">
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-    <div class="container">
-        <header>
-            <h1>Quick-Do</h1>
-            <div class="progress-wrapper">
-                <div class="progress-container">
-                    <div class="progress-bar" id="progressBar"></div>
-                </div>
-                <span id="progressText">0% 완료</span>
+    <div class="app-container">
+        <!-- 상단 헤더: 타이틀과 액션 버튼들 -->
+        <header class="app-header">
+            <h1>
+                My Tasks 
+                <span class="badge" id="remaining-badge" title="남은 할 일 개수" aria-label="남은 할 일 개수">0</span>
+            </h1>
+            <div class="header-actions">
+                <button id="export-btn" class="icon-btn" title="데이터 내보내기 (JSON)" aria-label="데이터 내보내기">📤</button>
+                <button id="import-btn" class="icon-btn" title="데이터 가져오기 (JSON)" aria-label="데이터 가져오기">📥</button>
+                <input type="file" id="import-input" accept=".json" style="display:none;" aria-hidden="true">
+                <button id="theme-toggle" class="icon-btn theme-toggle" title="다크 모드 토글 (Alt+D)" aria-label="다크 모드 토글">🌙</button>
             </div>
         </header>
+        
+        <!-- 오늘의 격언 영역 -->
+        <div id="quote-container" class="quote-container" aria-live="polite">
+            <p id="daily-quote" class="daily-quote">"오늘의 노력이 내일의 성과를 만듭니다."</p>
+        </div>
 
-        <section class="input-section">
-            <input type="text" id="todoInput" placeholder="할 일을 입력하세요..." maxlength="50">
-            <select id="categorySelect">
-                <option value="업무">업무</option>
-                <option value="개인">개인</option>
-                <option value="공부">공부</option>
+        <!-- 진행률 대시보드 -->
+        <div class="dashboard" role="region" aria-label="진행률 대시보드">
+            <div class="overall-progress">
+                <div class="progress-header">
+                    <span>전체 진행률</span>
+                    <span id="overall-text" aria-live="polite">0/0 완료 (0%)</span>
+                </div>
+                <div class="progress-bar-bg" aria-hidden="true">
+                    <div class="progress-bar-fill" id="overall-bar"></div>
+                </div>
+                <p id="motivation-text" class="motivation-text" aria-live="polite"></p>
+            </div>
+            
+            <div class="category-progress" aria-hidden="true">
+                <div class="mini-progress">
+                    <span class="label work">업무</span>
+                    <div class="mini-bar-bg"><div class="mini-bar-fill work" id="work-bar"></div></div>
+                </div>
+                <div class="mini-progress">
+                    <span class="label personal">개인</span>
+                    <div class="mini-bar-bg"><div class="mini-bar-fill personal" id="personal-bar"></div></div>
+                </div>
+                <div class="mini-progress">
+                    <span class="label study">공부</span>
+                    <div class="mini-bar-bg"><div class="mini-bar-fill study" id="study-bar"></div></div>
+                </div>
+            </div>
+
+            <div class="today-stats">
+                오늘 추가된 할 일: <span id="today-count">0</span>개
+            </div>
+        </div>
+
+        <!-- 컨트롤 영역: 검색, 정렬 및 필터 -->
+        <div class="controls-container">
+            <div class="top-controls">
+                <div class="search-container">
+                    <input type="text" id="search-input" placeholder="할 일 검색..." aria-label="할 일 검색">
+                </div>
+                <div class="sort-container">
+                    <select id="sort-select" class="sort-select" aria-label="정렬 방식 선택">
+                        <option value="date">최신순</option>
+                        <option value="category">카테고리순</option>
+                        <option value="status">완료순</option>
+                        <option value="manual">수동정렬 (드래그)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="filter-container" role="group" aria-label="카테고리 필터">
+                <button class="filter-btn active" data-filter="all" title="단축키: Alt+1" aria-pressed="true">전체</button>
+                <button class="filter-btn" data-filter="work" title="단축키: Alt+2" aria-pressed="false">업무</button>
+                <button class="filter-btn" data-filter="personal" title="단축키: Alt+3" aria-pressed="false">개인</button>
+                <button class="filter-btn" data-filter="study" title="단축키: Alt+4" aria-pressed="false">공부</button>
+            </div>
+        </div>
+        
+        <!-- 할 일 입력 폼 -->
+        <div class="input-container">
+            <select id="category-select" class="category-select" aria-label="추가할 항목 카테고리 선택">
+                <option value="work">업무</option>
+                <option value="personal">개인</option>
+                <option value="study">공부</option>
             </select>
-            <button id="addBtn">추가</button>
-        </section>
+            <input type="text" id="task-input" placeholder="새로운 할 일을 입력하세요... (Alt+N)" aria-label="새로운 할 일 내용 입력">
+            <button id="add-btn" aria-label="할 일 추가">추가</button>
+        </div>
+        
+        <!-- 리스트 헤더 및 전체 삭제 조작부 -->
+        <div class="list-header">
+            <h3>할 일 목록</h3>
+            <button id="clear-completed-btn" class="clear-btn" aria-label="완료된 항목 모두 삭제">완료된 항목 모두 삭제</button>
+        </div>
 
-        <section class="filter-section">
-            <button class="filter-btn active" data-filter="전체">전체</button>
-            <button class="filter-btn" data-filter="업무">업무</button>
-            <button class="filter-btn" data-filter="개인">개인</button>
-            <button class="filter-btn" data-filter="공부">공부</button>
-        </section>
-
-        <ul id="todoList"></ul>
+        <ul id="task-list" role="list"></ul>
+        <div id="empty-state" class="empty-state hidden" role="status">할 일이 없습니다. 새로운 목표를 설정해 보세요!</div>
     </div>
+
+    <!-- 토스트 알림창 영역 -->
+    <div id="toast-container" class="toast-container" aria-live="assertive"></div>
+
     <script src="script.js"></script>
 </body>
-
 </html>
